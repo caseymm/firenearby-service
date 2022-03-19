@@ -1,0 +1,25 @@
+name: send alerts for nearby fires
+on:
+  # push:
+  #   branches:
+  #     - main
+  # schedule:
+  #   - cron: '*/5 * * * *'
+
+env: 
+  AWS_ID: ${{ secrets.AWS_ID }}
+  AWS_SECRET: ${{ secrets.AWS_SECRET }}
+  API_URL: ${{ secrets.API_URL }}
+
+jobs:
+  get_shakemaps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - run: npm install
+      - run: npm install playwright-chromium
+      - run: yarn get-data
+      # - run: yarn wait
+      # - run: yarn screenshot-and-tweet
+
