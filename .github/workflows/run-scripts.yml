@@ -16,7 +16,7 @@ env:
   TEST_PHONE_NUMBER: ${{ secrets.TEST_PHONE_NUMBER }}
 
 jobs:
-  get_shakemaps:
+  get_fire_alerts:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
