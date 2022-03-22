@@ -1,8 +1,8 @@
 name: send alerts for nearby fires
 on:
-  # push:
-  #   branches:
-  #     - main
+  push:
+    branches:
+      - main
   # schedule:
   #   - cron: '*/5 * * * *'
 
@@ -19,7 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: npm install
       - run: npm install playwright-chromium
-      - run: yarn get-data
-      # - run: yarn wait
-      # - run: yarn screenshot-and-tweet
+      - run: yarn get-latest-fires
+      - run: yarn wait
+      - run: yarn identify-matches
 

@@ -26,6 +26,8 @@
     "node-fetch": "^3.0.0"
   },
   "dependencies": {
+    "@turf/distance": "^6.5.0",
+    "@turf/helpers": "^6.5.0",
     "dateformat": "^4.5.1",
     "dotenv": "^10.0.0",
     "playwright": "^1.14.1",

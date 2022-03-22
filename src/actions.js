@@ -2,7 +2,6 @@ import AWS from 'aws-sdk';
 import playwright from 'playwright';
 import fetch from 'node-fetch';
 
-
 const accountSid = process.env.TWILIO_ACCOUNT_SID;
 const authToken = process.env.TWILIO_AUTH_TOKEN;
 import Twilio from 'twilio';
@@ -12,6 +11,13 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 // The name of the bucket that you have created
 const BUCKET_NAME = 'firenearby';
+
+const titleCase = (str) => {
+  return str.toLowerCase()
+    .split(' ')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ');
+}
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
@@ -39,75 +45,65 @@ async function uploadFile(name, data, ext) {
   });
 };
 
-// GET
-const getUsers = (formJSON) => {
-  fetch(process.env.API_URL, {
-    method: 'GET',
-  })
-  .then((response) => response.json())
-  .then(resp => {
-    const json = JSON.parse(resp.body);
-    // console.log(json);
-    return json;
-  });
-};
-
-// POST
-// const updateUser = (formJSON) => {
-//   fetch(process.env.API_URL, {
-//     method: 'POST',
-//     body: JSON.stringify(formJSON),
-//   }).then((response) => {
-//     console.log(response);
-//     location.reload();
-//   });
-// };
-
-async function sendText(user){
+async function sendText(imgUrl, userLoc, dist, fireName){
+  console.log('SEND TEXT', imgUrl, userLoc, dist, fireName)
   twilio.messages
     .create({
-      body: 'This is a text text to CASEY.',
+      body: `The ${fireName} fire is ${dist} miles from your location of ${titleCase(userLoc)}.\n\nPlease visit https://caseymm.github.io/fire-nearby to view other fires.`,
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: process.env.TEST_PHONE_NUMBER
+      to: process.env.TEST_PHONE_NUMBER,
+      mediaUrl: [imgUrl],
     })
     .then(message => console.log(message.sid));
 }
 
-async function useTheData(id){
-  // // this is where screenshot stuff goes
-  // const browser = await playwright['chromium'].launch();
-  // const context = await browser.newContext({
-  //   deviceScaleFactor: 2
-  // });
-  // let isBlank = false;
-  // const page = await context.newPage();
-  // await page.setViewportSize({ width: 800, height: 800 });
-  // await page.goto(`https://caseymm.github.io/mbx-earthquakes/?url=https://caseymm-earthquakes.s3.us-west-1.amazonaws.com/shakemaps/${id}.geojson`);
-  // try{
-  //   const sel = await page.waitForSelector('#hidden', {state: 'attached'});
-  //   if(await sel.textContent() === 'blank map'){
-  //     isBlank = true;
-  //   }
-  // } catch(err){
-  //   // try again
-  //   await delay(5000) // waiting 5 seconds
-  //   console.log(`https://caseymm.github.io/mbx-earthquakes/?url=https://caseymm-earthquakes.s3.us-west-1.amazonaws.com/shakemaps/${id}.geojson`)
-  //   await page.goto(`https://caseymm.github.io/mbx-earthquakes/?url=https://caseymm-earthquakes.s3.us-west-1.amazonaws.com/shakemaps/${id}.geojson`);
-  //   const sel = await page.waitForSelector('#hidden', {state: 'attached'});
-  //   if(await sel.textContent() === 'blank map'){
-  //     isBlank = true;
-  //   }
-  // }
-  // if(isBlank){
-  //   await browser.close();
-  //   return null;
-  // } else {
-  //   // only take the screenshot if it's not blank water
-  //   const screenshot = await page.screenshot();
-  //   await uploadFile(`shakemaps/${id}`, screenshot, 'png');
-  //   await browser.close();
-  //   return screenshot;
-  // }
+async function getFires() {
+  const resp = await fetch('https://firenearby.s3.amazonaws.com/latest.json');
+  const json = await resp.json();
+  return json;
 }
 
-export { uploadFile, getUsers, sendText, useTheData }
+async function getUsers(){
+  const resp = await fetch(process.env.API_URL);
+  const json = await resp.json();
+  return json;
+};
+
+// this function returns the screenshot
+async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName, phoneNumber){
+  const browser = await playwright['chromium'].launch();
+  const context = await browser.newContext({
+    deviceScaleFactor: 2
+  });
+  let isBlank = false;
+  const page = await context.newPage();
+  await page.setViewportSize({ width: 600, height: 400 });
+  await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+  try{
+    const sel = await page.waitForSelector('#hidden', {state: 'attached'});
+    if(await sel.textContent() === 'blank map'){
+      isBlank = true;
+    }
+  } catch(err){
+    // try again
+    await delay(5000) // waiting 5 seconds
+    await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+    const sel = await page.waitForSelector('#hidden', {state: 'attached'});
+    if(await sel.textContent() === 'blank map'){
+      isBlank = true;
+    }
+  }
+  if(isBlank){
+    await browser.close();
+    return null;
+  } else {
+    // only take the screenshot if it's not blank water
+    const screenshot = await page.screenshot();
+    await uploadFile(`alerts/${phoneNumber}/${userLocName}-${fireLocName}`, screenshot, 'png');
+    await browser.close();
+    await delay(5000);
+    return encodeURI(`https://firenearby.s3.amazonaws.com/alerts/${phoneNumber}/${userLocName}-${fireLocName}.png`)
+  }
+}
+
+export { uploadFile, getUsers, sendText, createScreenshot, getFires }
