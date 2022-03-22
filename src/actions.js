@@ -75,35 +75,22 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const context = await browser.newContext({
     deviceScaleFactor: 2
   });
-  let isBlank = false;
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
   await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
-  try{
-    const sel = await page.waitForSelector('#hidden', {state: 'attached'});
-    if(await sel.textContent() === 'blank map'){
-      isBlank = true;
-    }
-  } catch(err){
-    // try again
-    await delay(5000) // waiting 5 seconds
-    await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
-    const sel = await page.waitForSelector('#hidden', {state: 'attached'});
-    if(await sel.textContent() === 'blank map'){
-      isBlank = true;
-    }
-  }
-  if(isBlank){
-    await browser.close();
-    return null;
-  } else {
-    // only take the screenshot if it's not blank water
-    const screenshot = await page.screenshot();
-    await uploadFile(`alerts/${phoneNumber}/${userLocName}-${fireLocName}`, screenshot, 'png');
-    await browser.close();
-    await delay(5000);
-    return encodeURI(`https://firenearby.s3.amazonaws.com/alerts/${phoneNumber}/${userLocName}-${fireLocName}.png`)
-  }
+  // try{
+  await page.waitForSelector('#hidden', {state: 'attached'});
+  // } catch(err){
+  //   // try again
+  //   await delay(5000) // waiting 5 seconds
+  //   await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+  //   const sel = await page.waitForSelector('#hidden', {state: 'attached'});
+  // }
+  const screenshot = await page.screenshot();
+  await uploadFile(`alerts/${phoneNumber}/${userLocName}-${fireLocName}`, screenshot, 'png');
+  await browser.close();
+  await delay(5000);
+  return encodeURI(`https://firenearby.s3.amazonaws.com/alerts/${phoneNumber}/${userLocName}-${fireLocName}.png`)
 }
 
 export { uploadFile, getUsers, sendText, createScreenshot, getFires }
