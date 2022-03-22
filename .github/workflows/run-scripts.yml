@@ -10,6 +10,10 @@ env:
   AWS_ID: ${{ secrets.AWS_ID }}
   AWS_SECRET: ${{ secrets.AWS_SECRET }}
   API_URL: ${{ secrets.API_URL }}
+  TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+  TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+  TWILIO_PHONE_NUMBER: ${{ secrets.TWILIO_PHONE_NUMBER }}
+  TEST_PHONE_NUMBER: ${{ secrets.TEST_PHONE_NUMBER }}
 
 jobs:
   get_shakemaps:

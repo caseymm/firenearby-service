@@ -2,12 +2,12 @@
   "name": "firenearby",
   "version": "1.0.0",
   "description": "get nearby fires and send messages if relevant",
-  "main": "get-data.js",
+  "main": "get-latest-fires.js",
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "ncc build src/action.js -o dist",
-    "get-data": "node -r dotenv/config src/get-data.js",
+    "get-latest-fires": "node -r dotenv/config src/get-latest-fires.js",
     "identify-matches": "node -r dotenv/config src/identify-matches.js",
     "wait": "node src/wait.js"
   },
