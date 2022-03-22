@@ -78,14 +78,14 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
   await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
-  // try{
-  await page.waitForSelector('#hidden', {state: 'attached'});
-  // } catch(err){
-  //   // try again
-  //   await delay(5000) // waiting 5 seconds
-  //   await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
-  //   const sel = await page.waitForSelector('#hidden', {state: 'attached'});
-  // }
+  try{
+    await page.waitForSelector('#hidden', {state: 'attached'});
+  } catch(err){
+    // try again
+    await delay(5000) // waiting 5 seconds
+    await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+    await page.waitForSelector('#hidden', {state: 'attached'});
+  }
   const screenshot = await page.screenshot();
   await uploadFile(`alerts/${phoneNumber}/${userLocName}-${fireLocName}`, screenshot, 'png');
   await browser.close();
