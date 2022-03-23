@@ -78,7 +78,7 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const pageURL = `https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`;
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
-  await page.goto(pageURL, timeout=0);
+  await page.goto(pageURL, { timeout: 0 });
   try{
     await page.waitForSelector('#hidden', {state: 'attached'});
   } catch(err){
