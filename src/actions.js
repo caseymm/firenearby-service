@@ -87,14 +87,15 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
   await page.goto(pageURL, { timeout: 0 });
-  // try{
-  await page.waitForSelector('#hidden', {state: 'attached'});
-  // } catch(err){
-  //   // try again
-  //   await delay(5000) // waiting 5 seconds
-  //   await page.goto(pageURL, { timeout: 0 });
-  //   await page.waitForSelector('#hidden', {state: 'attached'});
-  // }
+  try{
+    await page.waitForSelector('#hidden', {state: 'attached'});
+  } catch(err){
+    // // try again
+    // await delay(5000) // waiting 5 seconds
+    // await page.goto(pageURL, { timeout: 0 });
+    // await page.waitForSelector('#hidden', {state: 'attached'});
+    console.log('didn\'t find selector');
+  }
   const screenshot = await page.screenshot();
   await uploadFile(`alerts/${phoneNumber}/${userLocName}-${fireLocName}`, screenshot, 'png');
   await browser.close();
