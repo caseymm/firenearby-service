@@ -69,6 +69,14 @@ async function getUsers(){
   return json;
 };
 
+async function updateUser(userJson){
+  const resp = fetch(process.env.API_URL, {
+                 method: 'POST',
+                 body: JSON.stringify(userJson),
+               });
+  return resp;
+}
+
 // this function returns the screenshot
 async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName, phoneNumber){
   const browser = await playwright['chromium'].launch();
@@ -94,4 +102,4 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   return encodeURI(`https://firenearby.s3.amazonaws.com/alerts/${phoneNumber}/${userLocName}-${fireLocName}.png`)
 }
 
-export { uploadFile, getUsers, sendText, createScreenshot, getFires }
+export { uploadFile, getUsers, updateUser, sendText, createScreenshot, getFires }
