@@ -75,15 +75,16 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const context = await browser.newContext({
     deviceScaleFactor: 2
   });
+  const pageURL = `https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`;
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
-  await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+  await page.goto(pageURL, timeout=0);
   try{
     await page.waitForSelector('#hidden', {state: 'attached'});
   } catch(err){
     // try again
     await delay(5000) // waiting 5 seconds
-    await page.goto(`https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`);
+    await page.goto(pageURL, timeout=0);
     await page.waitForSelector('#hidden', {state: 'attached'});
   }
   const screenshot = await page.screenshot();
