@@ -84,7 +84,7 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   } catch(err){
     // try again
     await delay(5000) // waiting 5 seconds
-    await page.goto(pageURL, timeout=0);
+    await page.goto(pageURL, { timeout: 0 });
     await page.waitForSelector('#hidden', {state: 'attached'});
   }
   const screenshot = await page.screenshot();
