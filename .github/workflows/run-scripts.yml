@@ -3,8 +3,9 @@ on:
   push:
     branches:
       - main
-  # schedule:
-  #   - cron: '*/5 * * * *'
+  schedule:
+    # - cron: '*/5 * * * *'
+    - cron: '*/30 * * * *'
 
 env: 
   AWS_ID: ${{ secrets.AWS_ID }}
