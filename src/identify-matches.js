@@ -24,7 +24,7 @@ getFires().then(resp => {
             const ulCoords = ul.coordinates.join();
             const fireCoords = f.geometry.coordinates.join();
             createScreenshot(ulCoords, ul.location, fireCoords, f.properties.IncidentName, ul.phoneNumber).then(imgUrl => {
-              sendText(imgUrl, ul.location, String(parseInt(dist)), f.properties.IncidentName);
+              sendText(imgUrl, ul.phoneNumber, ul.location, String(parseInt(dist)), f.properties);
               // add to user
               ul.activeAlerts.push(f.properties.IncidentName);
               updateUser(ul);

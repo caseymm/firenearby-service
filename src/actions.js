@@ -12,13 +12,6 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 // The name of the bucket that you have created
 const BUCKET_NAME = 'firenearby';
 
-const titleCase = (str) => {
-  return str.toLowerCase()
-    .split(' ')
-    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
-    .join(' ');
-}
-
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,
   secretAccessKey: process.env.AWS_SECRET
@@ -45,13 +38,34 @@ async function uploadFile(name, data, ext) {
   });
 };
 
-async function sendText(imgUrl, userLoc, dist, fireName){
-  console.log('SEND TEXT', imgUrl, userLoc, dist, fireName)
+const formatText = (f, dist, userLoc) => {
+  const acres = () => {
+    let phrase = 'acres were';
+    if(f.DiscoveryAcres === 1){
+      phrase = 'acre was';
+    }
+    return phrase;
+  } 
+
+  const fireCause = (fireCause) => {
+    if(fireCause === 'Human'){
+      return `${fireCause.toLowerCase()} ignition`;
+    } else if(fireCause === null) {
+      return 'unknown';
+    } else {
+      return fireCause.toLowerCase();
+    }
+  }
+  return `The ${f.IncidentName} fire is ${dist} miles from your location of ${userLoc}. ${f.DiscoveryAcres} ${acres()} burning upon arrival at the scene and the fire cause is ${fireCause(f.FireCause)}.`;
+}
+
+async function sendText(imgUrl, userPhoneNumber, userLoc, dist, fireInfo){
+  console.log('SEND TEXT', imgUrl, userPhoneNumber)
   twilio.messages
     .create({
-      body: `The ${fireName} fire is ${dist} miles from your location of ${titleCase(userLoc)}.\n\nPlease visit https://caseymm.github.io/fire-nearby to view other fires.`,
+      body: formatText(fireInfo, dist, userLoc),
       from: process.env.TWILIO_PHONE_NUMBER,
-      to: process.env.TEST_PHONE_NUMBER,
+      to: userPhoneNumber,
       mediaUrl: [imgUrl],
     })
     .then(message => console.log(message.sid));
@@ -83,7 +97,7 @@ async function createScreenshot(userCoords, userLocName, fireCoords, fireLocName
   const context = await browser.newContext({
     deviceScaleFactor: 2
   });
-  const pageURL = `https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${titleCase(userLocName)}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`;
+  const pageURL = `https://caseymm.github.io/fire-nearby/#/screenshot?userLoc=${userCoords}&userLocName=${userLocName}&fireLoc=${fireCoords}&fireLocName=${fireLocName}&screenshot=true`;
   const page = await context.newPage();
   await page.setViewportSize({ width: 600, height: 400 });
   await page.goto(pageURL);

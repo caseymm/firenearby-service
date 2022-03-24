@@ -11,8 +11,14 @@ async function getLatestFires(){
   const resp = await fetch(recentFires);
   const data = await resp.json();
 
-  await uploadFile(`${dateStr}`, JSON.stringify(data), 'json');
-  await uploadFile(`latest`, JSON.stringify(data), 'json');
+  // filter our perscribed fires
+  const onlyWildfires = {
+    type: 'FeatureCollection',
+    features: data.features.filter(f => f.properties.IncidentTypeCategory !== 'RX')
+  };
+
+  await uploadFile(`${dateStr}`, JSON.stringify(onlyWildfires), 'json');
+  await uploadFile(`latest`, JSON.stringify(onlyWildfires), 'json');
   
 }
 
