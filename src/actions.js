@@ -80,7 +80,7 @@ async function getFires() {
 async function getUsers(){
   const resp = await fetch(process.env.API_URL);
   const json = await resp.json();
-  return json;
+  return json.filter(item => item.phoneNumber.length === 10 && item.coordinates.length > 1);
 };
 
 async function updateUser(userJson){
