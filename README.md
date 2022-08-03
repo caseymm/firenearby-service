@@ -12,3 +12,5 @@ To identify and send text alerts to users: `yarn identify-matches`
 
 *note: There is no build action since this script is being run by github actions
 
+_This service was updated on August 2, 2022 to include an action that directly writes to the repository in order to circumvent github action timeouts._
+
