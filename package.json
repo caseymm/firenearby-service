@@ -9,7 +9,8 @@
     "build": "ncc build src/action.js -o dist",
     "get-latest-fires": "node -r dotenv/config src/get-latest-fires.js",
     "identify-matches": "node -r dotenv/config src/identify-matches.js",
-    "wait": "node src/wait.js"
+    "wait": "node src/wait.js",
+    "update-timestamp": "node src/update-timestamp.js"
   },
   "repository": {
     "type": "git",

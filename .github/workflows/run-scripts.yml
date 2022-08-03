@@ -26,4 +26,5 @@ jobs:
       - run: yarn get-latest-fires
       - run: yarn wait
       - run: yarn identify-matches
+      - run: yarn update-timestamp
 
