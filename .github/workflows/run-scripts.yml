@@ -19,6 +19,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
       - uses: stefanzweifel/git-auto-commit-action@v4.14.1
       - run: npm install
       - run: npm install playwright-chromium
