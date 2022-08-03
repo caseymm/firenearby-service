@@ -28,4 +28,6 @@ jobs:
       - run: yarn identify-matches
       - run: yarn update-timestamp
       - uses: stefanzweifel/git-auto-commit-action@v4.14.1
+        with:
+          add_options: last-updated.txt
 
