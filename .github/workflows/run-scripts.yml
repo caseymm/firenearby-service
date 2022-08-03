@@ -1,5 +1,6 @@
 name: send alerts for nearby fires
 on:
+  workflow_dispatch:
   schedule:
     - cron: '*/10 * * * *'
 
@@ -18,20 +19,11 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v2
+      - uses: stefanzweifel/git-auto-commit-action@v4.14.1
       - run: npm install
       - run: npm install playwright-chromium
       - run: yarn get-latest-fires
       - run: yarn wait
       - run: yarn identify-matches
       - run: yarn update-timestamp
-      - name: check for changes
-        run: git status
-      - name: stage changed files
-        run: git add .
-      - name: commit changed files
-        run: git commit -m "Updating last-updated.txt"
-      - name: fetch from main
-        run: git fetch origin main
-      - name: push code to master
-        run: git push origin main
 
