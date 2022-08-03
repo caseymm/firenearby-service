@@ -21,11 +21,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-      - uses: stefanzweifel/git-auto-commit-action@v4.14.1
       - run: npm install
       - run: npm install playwright-chromium
       - run: yarn get-latest-fires
       - run: yarn wait
       - run: yarn identify-matches
       - run: yarn update-timestamp
+      - uses: stefanzweifel/git-auto-commit-action@v4.14.1
 
