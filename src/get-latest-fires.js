@@ -56,9 +56,22 @@ async function getLatestFires(){
 
   const onlyNewFiresGeoJSON = await getAllCurrentFires();
 
+  const combinedFires = {
+    type: 'FeatureCollection',
+    features: onlyWildfires.features
+  };
+
+  const wildFireNamesOnly = onlyWildfires.features.map(f => f.properties.IncidentName);
+  
+  onlyNewFiresGeoJSON.features.forEach(f => {
+    if(!wildFireNamesOnly.includes(f.properties.IncidentName)){
+      combinedFires.features.push(f);
+    }
+  })
+
   await uploadFile(`24hr_feed-${dateStr}`, JSON.stringify(onlyWildfires), 'json');
   await uploadFile(`all_current_feed-${dateStr}`, JSON.stringify(onlyNewFiresGeoJSON), 'json');
-  await uploadFile(`latest`, JSON.stringify(onlyWildfires.features.concat(onlyNewFiresGeoJSON.features)), 'json');
+  await uploadFile(`latest`, JSON.stringify(combinedFires), 'json');
   
 }
 

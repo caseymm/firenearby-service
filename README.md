@@ -7,7 +7,7 @@ The data is [downloaded from NIFC](https://data-nifc.opendata.arcgis.com/dataset
 All actions in this repository are run every 10 minutes.
 
 ### How to run manually
-To get the latest fire data: `yarn get-data`
+To get the latest fire data: `yarn get-latest-fires`
 To identify and send text alerts to users: `yarn identify-matches`
 
 *note: There is no build action since this script is being run by github actions
