@@ -68,6 +68,8 @@ async function getLatestFires(){
       combinedFires.features.push(f);
     }
   })
+  
+  combinedFires.features = combinedFires.features.filter(f => f.properties.DiscoveryAcres >= 1)
 
   await uploadFile(`24hr_feed-${dateStr}`, JSON.stringify(onlyWildfires), 'json');
   await uploadFile(`all_current_feed-${dateStr}`, JSON.stringify(onlyNewFiresGeoJSON), 'json');
